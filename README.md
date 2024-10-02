@@ -1,66 +1,14 @@
-## Foundry
+MyTokenA.sol 和 MyTokenB.sol：这两个合约是你自己定义的 ERC20 代币合约。它们负责创建代币，并提供标准的 ERC20 功能。
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+LiquidityPool.sol：这个合约将用于部署 Uniswap V2 工厂、创建两个流动池（PoolA 和 PoolB），并为这些流动池提供初始流动性。
 
-Foundry consists of:
+FlashArbitrage.sol：这个合约将实现闪电兑换的逻辑，使用从 PoolA 收到的 TokenA 在 PoolB 中兑换为 TokenB，然后将所有代币还回到 Uniswap 流动池中。你可以参考 Uniswap V2 的 ExampleFlashSwap 合约来实现这个合约。
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+部署和使用流程
+部署代币合约：先部署 MyTokenA 和 MyTokenB，并记下它们的地址。
 
-## Documentation
+部署流动池合约：部署 LiquidityPool.sol，传入 Uniswap 工厂地址和路由地址。然后通过调用 createLiquidityPool 创建流动池，并通过 addLiquidity 方法向两个流动池中添加流动性。
 
-https://book.getfoundry.sh/
+部署闪电套利合约：部署 FlashArbitrage.sol，传入路由地址和流动池地址（PoolA 和 PoolB）。
 
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+执行闪电套利：通过调用 startArbitrage 方法，触发套利过程，利用 uniswapV2Call 实现实际的交换逻辑。
